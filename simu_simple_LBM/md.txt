@@ -1,0 +1,32 @@
+=================== CONFIG ===================
+iterations           = 16
+width                = 800
+height               = 160
+obstacle_r           = 17.000000
+obstacle_x           = 161.000000
+obstacle_y           = 83.000000
+reynolds             = 100.000000
+reynolds             = 100.000000
+inflow_max_velocity  = 0.100000
+output_filename      = resultat.raw
+write_interval       = 50
+------------ Derived parameters --------------
+kinetic_viscosity    = 0.034000
+relax_parameter      = 1.661130
+==============================================
+ RANK 0 ( LEFT -1 RIGHT -1 TOP -1 BOTTOM -1 CORNER -1, -1, -1, -1 ) ( POSITION 0 0 ) (WH 802 162 ) 
+Progress [    1 /    16]
+Progress [    2 /    16]
+Progress [    3 /    16]
+Progress [    4 /    16]
+Progress [    5 /    16]
+Progress [    6 /    16]
+Progress [    7 /    16]
+Progress [    8 /    16]
+Progress [    9 /    16]
+Progress [   10 /    16]
+Progress [   11 /    16]
+Progress [   12 /    16]
+Progress [   13 /    16]
+Progress [   14 /    16]
+Progress [   15 /    16]
