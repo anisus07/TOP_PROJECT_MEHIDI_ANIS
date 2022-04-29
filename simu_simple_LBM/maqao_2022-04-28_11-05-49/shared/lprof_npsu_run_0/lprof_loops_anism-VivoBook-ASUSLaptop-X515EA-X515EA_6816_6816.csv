@@ -1,0 +1,5 @@
+loop_id;module;function_name;function_id;source_info;level;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;
+9;lbm;propagation;26;lbm_struct.h:116-116,lbm_phys.c:340-350;Innermost;7.14;0.01;;;;;;
+7;lbm;collision;25;lbm_struct.h:116-116,lbm_phys.c:51-321;Innermost;7.14;0.01;;;;;;
+43;lbm;lbm_comm_ghost_exchange;45;lbm_struct.h:116-116,lbm_comm.c:229-230;Innermost;3.57;0.01;;;;;;
+14;lbm;setup_init_state_global_poiseuille_profile;29;lbm_init.c:81-87,lbm_struct.h:116-135;Innermost;3.57;0.01;;;;;;

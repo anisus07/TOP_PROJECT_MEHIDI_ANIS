@@ -1,0 +1,78 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 126
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+[...]
+126: 	return &mesh->cells[ x * mesh->height * DIRECTIONS + DIRECTIONS];
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_comm.c: 160 - 320
+--------------------------------------------------------------------------------
+
+160: 	if (target_rank == -1)
+[...]
+168: 			for( y = 0 ; y < mesh->height-2 ; y++ )
+169: 				MPI_Send( &Mesh_get_col( mesh_to_process, x )[y], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
+170: 			break;
+171: 		case COMM_RECV:
+172: 			for( y = 0 ; y < mesh->height-2 ; y++ )
+173: 				MPI_Recv(  &Mesh_get_col( mesh_to_process, x )[y], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
+[...]
+192: 	if (target_rank == -1)
+[...]
+198: 			MPI_Send( Mesh_get_cell( mesh_to_process, x, y ), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
+199: 			break;
+200: 		case COMM_RECV:
+201: 			MPI_Recv( Mesh_get_cell( mesh_to_process, x, y ), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD, &status);
+202: 			break;
+[...]
+222: 	if (target_rank == -1)
+[...]
+228: 			for ( x = 1 ; x < mesh_to_process->width - 2 ; x++)
+229: 				for ( k = 0 ; k < DIRECTIONS ; k++)
+230: 					MPI_Send( &Mesh_get_cell(mesh_to_process, x, y)[k], 1, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
+231: 			break;
+232: 		case COMM_RECV:
+233: 			for ( x = 1 ; x < mesh_to_process->width - 2 ; x++)
+234: 				for ( k = 0 ; k < DIRECTIONS ; k++)
+235: 					MPI_Recv( &Mesh_get_cell(mesh_to_process, x, y)[k], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
+[...]
+244: {
+245: 	//vars
+246: 	int rank;
+247: 
+248: 	//get rank
+249: 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+250: 
+251: 	//Left to right phase : on reçoit à droite et on envoie depuis la gauche
+252: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->right_id,mesh->width - 2);
+253: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->left_id,0);
+[...]
+259: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->left_id,1);
+260: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->right_id,mesh->width - 1);
+[...]
+266: 	lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_SEND,mesh->bottom_id,mesh->height - 2);
+267: 	lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_RECV,mesh->top_id,0);
+[...]
+273: 	lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_SEND,mesh->top_id,1);
+274: 	lbm_comm_sync_ghosts_vertical(mesh,mesh_to_process,COMM_RECV,mesh->bottom_id,mesh->height - 1);
+[...]
+280: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_TOP_LEFT],1,1);
+281: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_BOTTOM_RIGHT],mesh->width - 1,mesh->height - 1);
+[...]
+287: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_LEFT],1,mesh->height - 2);
+288: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 1,0);
+[...]
+294: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 2,1);
+295: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_BOTTOM_LEFT],0,mesh->height - 1);
+[...]
+301: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_LEFT],1,mesh->height - 2);
+302: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_RIGHT],mesh->width - 1,0);
+[...]
+308: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_SEND,mesh->corner_id[CORNER_BOTTOM_RIGHT],mesh->width - 2,mesh->height - 2);
+309: 	lbm_comm_sync_ghosts_diagonal(mesh,mesh_to_process,COMM_RECV,mesh->corner_id[CORNER_TOP_LEFT],0,0);
+[...]
+315: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_SEND,mesh->left_id,1);
+316: 	lbm_comm_sync_ghosts_horizontal(mesh,mesh_to_process,COMM_RECV,mesh->right_id,mesh->width - 1);
+317: 	
+318: 	//wait for IO to finish, VERY important, do not remove.
+319: 	
+320: }

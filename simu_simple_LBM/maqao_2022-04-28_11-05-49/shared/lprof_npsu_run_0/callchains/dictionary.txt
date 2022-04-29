@@ -1,0 +1,25 @@
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:197
+lbm
+__libc_start_main - :0
+libc-2.31.so
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:190
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:191
+setup_init_state - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_init.c:156
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:160
+setup_init_state_global_poiseuille_profile - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h:135
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:163
+setup_init_state_global_poiseuille_profile - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h:116
+save_frame - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:94
+save_frame_all_domain - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_comm.c:347
+main - /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/main.c:169
+mca_pml_ob1_del_procs - :0
+mca_pml_ob1.so
+_dl_find_dso_for_object - :0
+ld-2.31.so
+_dl_catch_exception - :0
+unknown kernel region
+kernel
+__sched_yield - :0
+pmix_hotel_init - :0
+libpmix.so.2.2.25
+_dl_rtld_di_serinfo - :0

@@ -1,0 +1,16 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_init.c: 81 - 87
+--------------------------------------------------------------------------------
+
+81: 			for ( k = 0 ; k < DIRECTIONS ; k++)
+82: 			{
+83: 				//compute equilibr.
+84: 				v[0] = helper_compute_poiseuille(j + mesh_comm->y,MESH_HEIGHT);
+85: 				Mesh_get_cell(mesh, i, j)[k] = compute_equilibrium_profile(v,density,k);
+86: 				//mark as standard fluid
+87: 				*( lbm_cell_type_t_get_cell( mesh_type , i, j) ) = CELL_FUILD;
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 135
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+[...]
+135: 	return &meshtype->types[ x * meshtype->height + y];

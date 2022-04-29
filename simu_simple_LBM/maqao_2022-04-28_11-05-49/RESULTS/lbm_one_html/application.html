@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en-US"><head><title>OV - lbm - Application</title>
+<meta charset="utf-8" />
+<link rel="stylesheet" type="text/css" media="screen" href="css/ui.jqgrid.css" />
+<link rel="stylesheet" type="text/css" href="css/themes/redmond_custom/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="css/themes/redmond_custom/jquery.jqplot.min.css" />
+<link rel="stylesheet" type="text/css" href="css/MAQAO_theme.css" />
+<link rel="stylesheet" type="text/css" href="css/maqao_modal.css" />
+<link rel="stylesheet" type="text/css" href="css/global.css" />
+<link rel="stylesheet" type="text/css" href="css/maqao_menu.css" />
+<script src="js/jquery-1.9.0.min.js" ></script>
+<script src="js/jquery-ui-1.10.3.custom.min.js" ></script>
+<script src="js/grid.locale-en.js" ></script>
+<script src="js/jquery.jqGrid.min.js" ></script>
+<script src="js/d3.min.js" ></script>
+<script class="include" src="js/jquery.jqplot.min.js"></script>
+<script class="include" src="js/jqplot.pieRenderer.min.js"></script>
+<script class="include" src="js/jqplot.barRenderer.min.js"></script>
+<script class="include" src="js/jqplot.categoryAxisRenderer.min.js"></script>
+<script class="include" src="js/jqplot.pointLabels.min.js"></script>
+<script class="include" src="js/jqplot.cursor.min.js"></script>
+<script class="include" src="js/jqplot.canvasTextRenderer.min.js"></script>
+<script class="include" src="js/jqplot.canvasAxisTickRenderer.min.js"></script>
+<script class="include" src="js/jqplot.canvasAxisLabelRenderer.min.js"></script>
+<script class="include" src="js/jqplot.enhancedLegendRenderer.min.js"></script>
+<script class="include" src="js/jqplot.highlighter.min.js"></script>
+<script class="include" src="js/maqao_menu.js"></script>
+<script>
+$( function() {
+  $( document ).tooltip({
+    content: function() {
+      if ($(this).hasClass ("tooltip-maqao")
+      ||  $(this).hasClass ("tooltip-maqao-button")) {
+        return tooltips_texts[$(this).attr('tooltip_id')];
+      }
+    },
+    position: {
+      my: "center bottom-20",
+        at: "center top",
+        using: function( position, feedback ) {
+          $( this ).css( position );
+          $( "<div>" )
+            .addClass( "arrow-tt" )
+            .addClass( feedback.vertical )
+            .addClass( feedback.horizontal )
+            .appendTo( this );
+        }
+      }
+  });
+} );
+
+// Code from https://www.htmlgoodies.com/beyond/javascript/article.php/3724571/Using-Multiple-JavaScript-Onload-Functions.htm
+function addLoadEvent(func) {
+  var oldonload = window.onload;
+  if (typeof window.onload != 'function') {
+    window.onload = func;
+  } else {
+    window.onload = function() {
+      if (oldonload) {
+        oldonload();
+      }
+      func();
+    }
+  }
+}
+function loadCSS(filename){ 
+  var file = document.createElement("link");
+  file.setAttribute("rel", "stylesheet");
+  file.setAttribute("type", "text/css");
+  file.setAttribute("href", filename);
+  document.head.appendChild(file);
+}
+addLoadEvent(function(){
+  var theme = localStorage.getItem("__MAQAO_OV_theme__");
+  if (theme) {
+    loadCSS("css/"+theme+".css");
+  }
+  else {
+    localStorage.setItem("__MAQAO_OV_theme__", "MAQAO_theme");
+    loadCSS("css/MAQAO_theme.css");
+  }
+});
+</script>
+</head><body>
+<div id="page_title"><img alt="MAQAO" id="maqao_logo" src="images/MAQAO_small_logo.png"/><ul id="maqao_menu"><li ><a  href="index.html">Global</a><ul><li ><a  href="config.html">Configurations</a></li><li ><a  href="log.html">Logs</a></li></ul></li><li ><a class="_current_page _first_menu_level" href="application.html">Application</a></li><li ><a  href="fcts_and_loops.html">Functions</a></li><li ><a  href="loops_index.html">Loops</a></li><li ><a  href="topology.html">Topology</a></li></ul>
+<span><img alt="options" id="menu_options_icon" src="images/gear_20.png" onclick="__open_options ()"/></span>
+</div>
+<script>
+function __change_theme () {
+  var new_theme = document.getElementById("select_theme").value;
+  localStorage.setItem("__MAQAO_OV_theme__", new_theme);
+    loadCSS("css/"+new_theme+".css");
+}
+function __open_options () {
+  var elem = document.getElementById ("options_configuration");
+  if (elem.dataset.open == "false") {
+    elem.dataset.open = "true";
+    elem.style.display = "block";
+  }
+  else {
+    elem.dataset.open = "false";
+    elem.style.display = "none";
+  }
+}
+</script>
+<div id="anchor_file_start"></div>
+<div id="maqao_content">
+<div>
+  <div id="spacer_page_title" ></div>
+  <div id="options_configuration" data-open="false" style="display:none;">
+    <h3 id="options_configuration_header">Report Configuration</h3>
+    <span style="margin-left:10px;"><label for="select_theme">Theme: </label>    <select name="theme" id="select_theme" onchange="__change_theme ()">  <option value="MAQAO_theme">MAQAO_theme</option>  <option value="darkgrey">darkgrey</option>  <option value="cyan">cyan</option></select></span></div>
+</div>
+<script>
+document.getElementById("spacer_page_title").style.height = (document.getElementById("page_title").clientHeight + 25)+"px";
+var obj = document.getElementById("page_title");
+if (obj) {
+  var elems = document.getElementsByClassName ("_first_menu_level")
+  if (obj.clientHeight < 90) {
+    for (var i = 0; i < elems.length; i++) {
+      elems.item(i).style.borderBottomLeftRadius = "";
+      elems.item(i).style.borderBottomRightRadius = "";
+    }
+  }
+  else {
+    for (var i = 0; i < elems.length; i++) {
+      elems.item(i).style.borderBottomLeftRadius = "10px";
+      elems.item(i).style.borderBottomRightRadius = "10px";
+    }
+  }
+}
+</script>
+<div style="width: 100%; display: table;" class="main_section_div">
+<div style="display: table-row">
+<div class="_fixed_box" style="width:30%;display: table-cell;overflow-y: auto;">
+<div>
+<table style="width:100%;">
+<tr><td id="td_app_selector_1" onclick="click_app_selector (this);" class="td_app_selector">Detailed Application Categorization<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="0" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_2" onclick="click_app_selector (this);" class="td_app_selector">Detailed Function Times<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="1" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_3" onclick="click_app_selector (this);" class="td_app_selector">Scalability - Coverage per Category<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="2" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_4" onclick="click_app_selector (this);" class="td_app_selector">Scalability - Time per Category<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="3" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_5" onclick="click_app_selector (this);" class="td_app_selector">Scalability - Efficiency<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="4" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_6" onclick="click_app_selector (this);" class="td_app_selector">Function Based Profile<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="5" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_7" onclick="click_app_selector (this);" class="td_app_selector">Scalability - Coverage per Parallel Efficiency<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="6" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+<tr><td id="td_app_selector_8" onclick="click_app_selector (this);" class="td_app_selector">Scalability - Coverage per Parallel Speedup<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="7" style="background-color:var(--fixed_box_header_background);"></span></td></tr>
+</table>
+</div>
+</div>
+<div class="_fixed_box" style="width:70%;display: table-cell;vertical-align:top;">
+<div id="td_app_selected_1" class="td_app_selected">
+<h3 class="selected_panel_h3">Detailed Application Categorization</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_328" style="height:460px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_div_table"><div style="overflow:auto;">
+<table id="_treed_table_152" class="_treed_table"><tr><th class="_freezed_row  _left ">ID</th><th class="_freezed_row ">Time(s)</th><th class="_freezed_row ">Binary(%)</th><th class="_freezed_row ">MPI(%)</th><th class="_freezed_row ">OMP(%)</th><th class="_freezed_row ">Math(%)</th><th class="_freezed_row ">System(%)</th><th class="_freezed_row ">Pthread(%)</th><th class="_freezed_row ">IO(%)</th><th class="_freezed_row ">String(%)</th><th class="_freezed_row ">Memory(%)</th><th class="_freezed_row ">Others(%)</th></tr>
+<tr id="_tr_152_1" ><td id="_tr_152_1-1"  data-_i="1" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:0px;cursor:pointer;" >&#x25BC;</span>run_0<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1-2"  data-_i="1" data-_j="2"  class=" _centered" >0.15</td><td id="_tr_152_1-3"  data-_i="1" data-_j="3"  class=" _centered" >25.61</td><td id="_tr_152_1-4"  data-_i="1" data-_j="4"  class=" _centered" >56.04</td><td id="_tr_152_1-5"  data-_i="1" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1-6"  data-_i="1" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1-7"  data-_i="1" data-_j="7"  class=" _centered" >16.43</td><td id="_tr_152_1-8"  data-_i="1" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1-9"  data-_i="1" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1-10"  data-_i="1" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1-11"  data-_i="1" data-_j="11"  class=" _centered" >0.48</td><td id="_tr_152_1-12"  data-_i="1" data-_j="12"  class=" _centered" >1.45</td></tr>
+<tr class="_tr_152_1"  id="_tr_152_1_1" ><td id="_tr_152_1_1-1"  data-_i="2" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:15px;cursor:pointer;" >&#x25BC;</span>Node anism-VivoBook-ASUSLaptop-X515EA-X515EA<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1-2"  data-_i="2" data-_j="2"  class=" _centered" >0.15</td><td id="_tr_152_1_1-3"  data-_i="2" data-_j="3"  class=" _centered" >25.61</td><td id="_tr_152_1_1-4"  data-_i="2" data-_j="4"  class=" _centered" >56.04</td><td id="_tr_152_1_1-5"  data-_i="2" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1-6"  data-_i="2" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1-7"  data-_i="2" data-_j="7"  class=" _centered" >16.43</td><td id="_tr_152_1_1-8"  data-_i="2" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1-9"  data-_i="2" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1-10"  data-_i="2" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1-11"  data-_i="2" data-_j="11"  class=" _centered" >0.48</td><td id="_tr_152_1_1-12"  data-_i="2" data-_j="12"  class=" _centered" >1.45</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_1" ><td id="_tr_152_1_1_1-1"  data-_i="3" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6792<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_1-2"  data-_i="3" data-_j="2"  class=" _centered" >0.15</td><td id="_tr_152_1_1_1-3"  data-_i="3" data-_j="3"  class=" _centered" >16.67</td><td id="_tr_152_1_1_1-4"  data-_i="3" data-_j="4"  class=" _centered" >66.67</td><td id="_tr_152_1_1_1-5"  data-_i="3" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_1-6"  data-_i="3" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_1-7"  data-_i="3" data-_j="7"  class=" _centered" >16.67</td><td id="_tr_152_1_1_1-8"  data-_i="3" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_1-9"  data-_i="3" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_1-10"  data-_i="3" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_1-11"  data-_i="3" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_1-12"  data-_i="3" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1_1"  id="_tr_152_1_1_1_1"  ondblclick="_action_107(this,4,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6792_6792.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_1_1-1"  data-_i="4" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6792</td><td id="_tr_152_1_1_1_1-2"  data-_i="4" data-_j="2"  class=" _centered" >0.15</td><td id="_tr_152_1_1_1_1-3"  data-_i="4" data-_j="3"  class=" _centered" >16.67</td><td id="_tr_152_1_1_1_1-4"  data-_i="4" data-_j="4"  class=" _centered" >66.67</td><td id="_tr_152_1_1_1_1-5"  data-_i="4" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-6"  data-_i="4" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-7"  data-_i="4" data-_j="7"  class=" _centered" >16.67</td><td id="_tr_152_1_1_1_1-8"  data-_i="4" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-9"  data-_i="4" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-10"  data-_i="4" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-11"  data-_i="4" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_1_1-12"  data-_i="4" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_2" ><td id="_tr_152_1_1_2-1"  data-_i="5" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6794<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_2-2"  data-_i="5" data-_j="2"  class=" _centered" >0.1</td><td id="_tr_152_1_1_2-3"  data-_i="5" data-_j="3"  class=" _centered" >66.67</td><td id="_tr_152_1_1_2-4"  data-_i="5" data-_j="4"  class=" _centered" >4.76</td><td id="_tr_152_1_1_2-5"  data-_i="5" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_2-6"  data-_i="5" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_2-7"  data-_i="5" data-_j="7"  class=" _centered" >28.57</td><td id="_tr_152_1_1_2-8"  data-_i="5" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_2-9"  data-_i="5" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_2-10"  data-_i="5" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_2-11"  data-_i="5" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_2-12"  data-_i="5" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1_2"  id="_tr_152_1_1_2_1"  ondblclick="_action_107(this,6,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6794_6794.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_2_1-1"  data-_i="6" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6794</td><td id="_tr_152_1_1_2_1-2"  data-_i="6" data-_j="2"  class=" _centered" >0.1</td><td id="_tr_152_1_1_2_1-3"  data-_i="6" data-_j="3"  class=" _centered" >66.67</td><td id="_tr_152_1_1_2_1-4"  data-_i="6" data-_j="4"  class=" _centered" >4.76</td><td id="_tr_152_1_1_2_1-5"  data-_i="6" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-6"  data-_i="6" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-7"  data-_i="6" data-_j="7"  class=" _centered" >28.57</td><td id="_tr_152_1_1_2_1-8"  data-_i="6" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-9"  data-_i="6" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-10"  data-_i="6" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-11"  data-_i="6" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_2_1-12"  data-_i="6" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_3" ><td id="_tr_152_1_1_3-1"  data-_i="7" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6804<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_3-2"  data-_i="7" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_3-3"  data-_i="7" data-_j="3"  class=" _centered" >14.81</td><td id="_tr_152_1_1_3-4"  data-_i="7" data-_j="4"  class=" _centered" >70.37</td><td id="_tr_152_1_1_3-5"  data-_i="7" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_3-6"  data-_i="7" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_3-7"  data-_i="7" data-_j="7"  class=" _centered" >11.11</td><td id="_tr_152_1_1_3-8"  data-_i="7" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_3-9"  data-_i="7" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_3-10"  data-_i="7" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_3-11"  data-_i="7" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_3-12"  data-_i="7" data-_j="12"  class=" _centered" >3.7</td></tr>
+<tr class="_tr_152_1_1_3"  id="_tr_152_1_1_3_1"  ondblclick="_action_107(this,8,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6804_6804.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_3_1-1"  data-_i="8" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6804</td><td id="_tr_152_1_1_3_1-2"  data-_i="8" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_3_1-3"  data-_i="8" data-_j="3"  class=" _centered" >14.81</td><td id="_tr_152_1_1_3_1-4"  data-_i="8" data-_j="4"  class=" _centered" >70.37</td><td id="_tr_152_1_1_3_1-5"  data-_i="8" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-6"  data-_i="8" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-7"  data-_i="8" data-_j="7"  class=" _centered" >11.11</td><td id="_tr_152_1_1_3_1-8"  data-_i="8" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-9"  data-_i="8" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-10"  data-_i="8" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-11"  data-_i="8" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_3_1-12"  data-_i="8" data-_j="12"  class=" _centered" >3.7</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_4" ><td id="_tr_152_1_1_4-1"  data-_i="9" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6805<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_4-2"  data-_i="9" data-_j="2"  class=" _centered" >0.13</td><td id="_tr_152_1_1_4-3"  data-_i="9" data-_j="3"  class=" _centered" >3.7</td><td id="_tr_152_1_1_4-4"  data-_i="9" data-_j="4"  class=" _centered" >81.48</td><td id="_tr_152_1_1_4-5"  data-_i="9" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_4-6"  data-_i="9" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_4-7"  data-_i="9" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_4-8"  data-_i="9" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_4-9"  data-_i="9" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_4-10"  data-_i="9" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_4-11"  data-_i="9" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_4-12"  data-_i="9" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1_4"  id="_tr_152_1_1_4_1"  ondblclick="_action_107(this,10,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6805_6805.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_4_1-1"  data-_i="10" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6805</td><td id="_tr_152_1_1_4_1-2"  data-_i="10" data-_j="2"  class=" _centered" >0.13</td><td id="_tr_152_1_1_4_1-3"  data-_i="10" data-_j="3"  class=" _centered" >3.7</td><td id="_tr_152_1_1_4_1-4"  data-_i="10" data-_j="4"  class=" _centered" >81.48</td><td id="_tr_152_1_1_4_1-5"  data-_i="10" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-6"  data-_i="10" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-7"  data-_i="10" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_4_1-8"  data-_i="10" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-9"  data-_i="10" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-10"  data-_i="10" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-11"  data-_i="10" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_4_1-12"  data-_i="10" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_5" ><td id="_tr_152_1_1_5-1"  data-_i="11" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6816<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_5-2"  data-_i="11" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_5-3"  data-_i="11" data-_j="3"  class=" _centered" >21.43</td><td id="_tr_152_1_1_5-4"  data-_i="11" data-_j="4"  class=" _centered" >64.29</td><td id="_tr_152_1_1_5-5"  data-_i="11" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_5-6"  data-_i="11" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_5-7"  data-_i="11" data-_j="7"  class=" _centered" >10.71</td><td id="_tr_152_1_1_5-8"  data-_i="11" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_5-9"  data-_i="11" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_5-10"  data-_i="11" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_5-11"  data-_i="11" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_5-12"  data-_i="11" data-_j="12"  class=" _centered" >3.57</td></tr>
+<tr class="_tr_152_1_1_5"  id="_tr_152_1_1_5_1"  ondblclick="_action_107(this,12,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6816_6816.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_5_1-1"  data-_i="12" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6816</td><td id="_tr_152_1_1_5_1-2"  data-_i="12" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_5_1-3"  data-_i="12" data-_j="3"  class=" _centered" >21.43</td><td id="_tr_152_1_1_5_1-4"  data-_i="12" data-_j="4"  class=" _centered" >64.29</td><td id="_tr_152_1_1_5_1-5"  data-_i="12" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-6"  data-_i="12" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-7"  data-_i="12" data-_j="7"  class=" _centered" >10.71</td><td id="_tr_152_1_1_5_1-8"  data-_i="12" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-9"  data-_i="12" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-10"  data-_i="12" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-11"  data-_i="12" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_5_1-12"  data-_i="12" data-_j="12"  class=" _centered" >3.57</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_6" ><td id="_tr_152_1_1_6-1"  data-_i="13" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6817<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_6-2"  data-_i="13" data-_j="2"  class=" _centered" >0.13</td><td id="_tr_152_1_1_6-3"  data-_i="13" data-_j="3"  class=" _centered" >11.11</td><td id="_tr_152_1_1_6-4"  data-_i="13" data-_j="4"  class=" _centered" >70.37</td><td id="_tr_152_1_1_6-5"  data-_i="13" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_6-6"  data-_i="13" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_6-7"  data-_i="13" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_6-8"  data-_i="13" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_6-9"  data-_i="13" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_6-10"  data-_i="13" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_6-11"  data-_i="13" data-_j="11"  class=" _centered" >3.7</td><td id="_tr_152_1_1_6-12"  data-_i="13" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1_6"  id="_tr_152_1_1_6_1"  ondblclick="_action_107(this,14,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6817_6817.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_6_1-1"  data-_i="14" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6817</td><td id="_tr_152_1_1_6_1-2"  data-_i="14" data-_j="2"  class=" _centered" >0.13</td><td id="_tr_152_1_1_6_1-3"  data-_i="14" data-_j="3"  class=" _centered" >11.11</td><td id="_tr_152_1_1_6_1-4"  data-_i="14" data-_j="4"  class=" _centered" >70.37</td><td id="_tr_152_1_1_6_1-5"  data-_i="14" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_6_1-6"  data-_i="14" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_6_1-7"  data-_i="14" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_6_1-8"  data-_i="14" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_6_1-9"  data-_i="14" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_6_1-10"  data-_i="14" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_6_1-11"  data-_i="14" data-_j="11"  class=" _centered" >3.7</td><td id="_tr_152_1_1_6_1-12"  data-_i="14" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_7" ><td id="_tr_152_1_1_7-1"  data-_i="15" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6828<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_7-2"  data-_i="15" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_7-3"  data-_i="15" data-_j="3"  class=" _centered" >18.52</td><td id="_tr_152_1_1_7-4"  data-_i="15" data-_j="4"  class=" _centered" >62.96</td><td id="_tr_152_1_1_7-5"  data-_i="15" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_7-6"  data-_i="15" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_7-7"  data-_i="15" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_7-8"  data-_i="15" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_7-9"  data-_i="15" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_7-10"  data-_i="15" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_7-11"  data-_i="15" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_7-12"  data-_i="15" data-_j="12"  class=" _centered" >3.7</td></tr>
+<tr class="_tr_152_1_1_7"  id="_tr_152_1_1_7_1"  ondblclick="_action_107(this,16,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6828_6828.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_7_1-1"  data-_i="16" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6828</td><td id="_tr_152_1_1_7_1-2"  data-_i="16" data-_j="2"  class=" _centered" >0.14</td><td id="_tr_152_1_1_7_1-3"  data-_i="16" data-_j="3"  class=" _centered" >18.52</td><td id="_tr_152_1_1_7_1-4"  data-_i="16" data-_j="4"  class=" _centered" >62.96</td><td id="_tr_152_1_1_7_1-5"  data-_i="16" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-6"  data-_i="16" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-7"  data-_i="16" data-_j="7"  class=" _centered" >14.81</td><td id="_tr_152_1_1_7_1-8"  data-_i="16" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-9"  data-_i="16" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-10"  data-_i="16" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-11"  data-_i="16" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_7_1-12"  data-_i="16" data-_j="12"  class=" _centered" >3.7</td></tr>
+<tr class="_tr_152_1_1"  id="_tr_152_1_1_8" ><td id="_tr_152_1_1_8-1"  data-_i="17" data-_j="1"  class=" _left" ><span onclick="_click_treed(this)" style="margin-right:5px;margin-left:30px;cursor:pointer;" >&#x25BC;</span>Process 6829<span onclick="_click_expand(this)" class="span_expand">&#8211;</span></td><td id="_tr_152_1_1_8-2"  data-_i="17" data-_j="2"  class=" _centered" >0.1</td><td id="_tr_152_1_1_8-3"  data-_i="17" data-_j="3"  class=" _centered" >75</td><td id="_tr_152_1_1_8-4"  data-_i="17" data-_j="4"  class=" _centered" >0</td><td id="_tr_152_1_1_8-5"  data-_i="17" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_8-6"  data-_i="17" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_8-7"  data-_i="17" data-_j="7"  class=" _centered" >25</td><td id="_tr_152_1_1_8-8"  data-_i="17" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_8-9"  data-_i="17" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_8-10"  data-_i="17" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_8-11"  data-_i="17" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_8-12"  data-_i="17" data-_j="12"  class=" _centered" >0</td></tr>
+<tr class="_tr_152_1_1_8"  id="_tr_152_1_1_8_1"  ondblclick="_action_107(this,18,-1, 'topo/run_0_anism-VivoBook-ASUSLaptop-X515EA-X515EA_6829_6829.html');"  style="cursor:pointer;"><td id="_tr_152_1_1_8_1-1"  data-_i="18" data-_j="1"  class=" _left" ><span style="margin-right:10px;margin-left:48px;" >&#x25CB;</span>Thread 6829</td><td id="_tr_152_1_1_8_1-2"  data-_i="18" data-_j="2"  class=" _centered" >0.1</td><td id="_tr_152_1_1_8_1-3"  data-_i="18" data-_j="3"  class=" _centered" >75</td><td id="_tr_152_1_1_8_1-4"  data-_i="18" data-_j="4"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-5"  data-_i="18" data-_j="5"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-6"  data-_i="18" data-_j="6"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-7"  data-_i="18" data-_j="7"  class=" _centered" >25</td><td id="_tr_152_1_1_8_1-8"  data-_i="18" data-_j="8"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-9"  data-_i="18" data-_j="9"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-10"  data-_i="18" data-_j="10"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-11"  data-_i="18" data-_j="11"  class=" _centered" >0</td><td id="_tr_152_1_1_8_1-12"  data-_i="18" data-_j="12"  class=" _centered" >0</td></tr>
+</table></div>
+</div>
+<script>
+function _action_107 (obj, i, j, p){
+           open(""+p+"");
+}
+</script>
+</div>
+<div id="td_app_selected_2" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Detailed Function Times</h3>
+<div style="margin: 10px; overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_329" style="height:500px" ></div><div style="text-align:center;"><span class="zoom_legend_block tooltip-maqao" title="" tooltip_id="8"><div class="zoom_legend_color" style="background:#333399;"></div>mca_btl_vader_poll_h...</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#cc00cc;"></div>propagation</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#ffcc00;"></div>collision</span>
+<span class="zoom_legend_block tooltip-maqao" title="" tooltip_id="9"><div class="zoom_legend_color" style="background:#339966;"></div>mca_pml_ob1_recv_req...</span>
+<span class="zoom_legend_block tooltip-maqao" title="" tooltip_id="10"><div class="zoom_legend_color" style="background:#80ccff;"></div>mca_pml_ob1_rdma_pip...</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#80ffcc;"></div>_mcleanup</span>
+<span class="zoom_legend_block tooltip-maqao" title="" tooltip_id="11"><div class="zoom_legend_color" style="background:#7979d2;"></div>mca_pml_ob1_recv_req...</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#ff4dff;"></div>_dl_rtld_di_serinfo</span>
+<span class="zoom_legend_block tooltip-maqao" title="" tooltip_id="12"><div class="zoom_legend_color" style="background:#ffe066;"></div>mca_pml_ob1_recv_fra...</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#66cc99;"></div>mca_pml_ob1_send</span>
+<span class="zoom_legend_block"><div class="zoom_legend_color" style="background:#ccebff;"></div>Other Functions</span>
+</div></div>
+<script class="code">
+</script>
+</div>
+</div>
+<div id="td_app_selected_3" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Scalability - Coverage per Category</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_330" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_accordion_box collapsed" ><h3 id="_accordion_header_1" class="_header collapsed" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25B6;</span>Detailed Coverage per Category</h3><div id="_accordion_content_1" class="_content collapsed"><div class="_div_table" id="_fixed_153"><table class="_fixed_table" id="_fixed_table_153"><tr><th class="_freezed_row  _left _freezed_col"><span></span>Run</th><th class="_freezed_row "><span></span>Number of threads</th><th class="_freezed_row "><span></span>Binary (%)</th><th class="_freezed_row "><span></span>MPI (%)</th><th class="_freezed_row "><span></span>System (%)</th><th class="_freezed_row "><span></span>Memory (%)</th><th class="_freezed_row "><span></span>Others (%)</th></tr><tr id="_tr_153_1" ><td id="_td_153_1_1"  data-_i="1" data-_j="1"  title="" tooltip_id="13" class=" _left _freezed_col  _centered tooltip-maqao" >run_0</td><td id="_td_153_1_2"  data-_i="1" data-_j="2"  class=" _centered" >8</td><td id="_td_153_1_3"  data-_i="1" data-_j="3"  class=" _centered"  style="background:#B75541;" >25.61</td><td id="_td_153_1_4"  data-_i="1" data-_j="4"  class=" _centered"  style="background:#A52B12;" >56.04</td><td id="_td_153_1_5"  data-_i="1" data-_j="5"  class=" _centered"  style="background:#C06A59;" >16.43</td><td id="_td_153_1_6"  data-_i="1" data-_j="6"  class=" _centered"  style="background:#7B90C8;" >0.48</td><td id="_td_153_1_7"  data-_i="1" data-_j="7"  class=" _centered"  style="background:#947FA5;" >1.45</td></tr>
+</table></div></div></div></div>
+</div>
+<div id="td_app_selected_4" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Scalability - Time per Category</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_331" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_accordion_box collapsed" ><h3 id="_accordion_header_2" class="_header collapsed" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25B6;</span>Detailed Time per Category</h3><div id="_accordion_content_2" class="_content collapsed"><div class="_div_table" id="_fixed_154"><table class="_fixed_table" id="_fixed_table_154"><tr><th class="_freezed_row  _left _freezed_col"><span></span>Run</th><th class="_freezed_row "><span></span>Number of threads</th><th class="_freezed_row "><span></span>Total Time (s)</th><th class="_freezed_row "><span></span>Binary (s)</th><th class="_freezed_row "><span></span>MPI (s)</th><th class="_freezed_row "><span></span>System (s)</th></tr><tr id="_tr_154_1" ><td id="_td_154_1_1"  data-_i="1" data-_j="1"  title="" tooltip_id="14" class=" _left _freezed_col  _centered tooltip-maqao" >run_0</td><td id="_td_154_1_2"  data-_i="1" data-_j="2"  class=" _centered" >8</td><td id="_td_154_1_3"  data-_i="1" data-_j="3"  class=" _centered" >0.15</td><td id="_td_154_1_4"  data-_i="1" data-_j="4"  class=" _centered" >0.04</td><td id="_td_154_1_5"  data-_i="1" data-_j="5"  class=" _centered" >0.08</td><td id="_td_154_1_6"  data-_i="1" data-_j="6"  class=" _centered" >0.02</td></tr>
+</table></div></div></div></div>
+</div>
+<div id="td_app_selected_5" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Scalability - Efficiency</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_332" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_accordion_box collapsed" ><h3 id="_accordion_header_3" class="_header collapsed" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25B6;</span>Detailed Efficiency</h3><div id="_accordion_content_3" class="_content collapsed"><div class="_div_table" id="_fixed_155"><table class="_fixed_table" id="_fixed_table_155"><tr><th class="_freezed_row  _left _freezed_col"><span></span>Run</th><th class="_freezed_row "><span></span>Number of observed threads</th><th class="_freezed_row "><span></span>Efficiency (ideal is 1)</th></tr><tr id="_tr_155_1" ><td id="_td_155_1_1"  data-_i="1" data-_j="1"  title="" tooltip_id="15" class=" _left _freezed_col  _centered tooltip-maqao" >run_0</td><td id="_td_155_1_2"  data-_i="1" data-_j="2"  class=" _centered" >8</td><td id="_td_155_1_3"  data-_i="1" data-_j="3"  class=" _centered"  style="background:#579619;" >1</td></tr>
+</table></div></div></div></div>
+</div>
+<div id="td_app_selected_6" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Function Based Profile</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_333" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script></div>
+</div>
+<div id="td_app_selected_7" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Scalability - Coverage per Parallel Efficiency at Function Level</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_334" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_accordion_box collapsed" ><h3 id="_accordion_header_4" class="_header collapsed" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25B6;</span>Detailed Coverage per Parallel Efficiency</h3><div id="_accordion_content_4" class="_content collapsed"><div class="_div_table" id="_fixed_156"><div class="_accordion_box" ><h3 id="_accordion_header_5" class="_header" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25BC;</span>Colums Filter<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="16" ></span></h3><div id="_accordion_content_5" class="_content"><div style="max-height:165px;"><form>
+<span style="white-space:nowrap;"><input class="input_check_table_menu" type="checkbox" id="_table156_opt13" onclick="click_table_menu('_table156_opt13', '_table156_opt_all', 'list_opts_table156')" style="margin-left: 30px;vertical-align: middle;cursor:pointer;" >Coverage (%) new or unmeasured functions</span>
+<span style='white-space:nowrap;'><input class="input_check_table_menu" type="button" id="_table156_opt_all" onclick="set_all_table_menu(this, 'list_opts_table156')" style="margin-left: 30px;vertical-align: middle;cursor:pointer;" value="Select all"></span>
+</form></div>
+</div></div><table class="_fixed_table" id="_fixed_table_156"><tr><th class="_freezed_row  _left _freezed_col"><span></span>Run</th><th class="_freezed_row "><span></span>Number of observed threads</th><th class="_freezed_row "><span></span>Coverage (%)<br/>0% to 10%  eff. </th><th class="_freezed_row "><span></span>Coverage (%)<br/>10% to 20% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>20% to 30% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>30% to 40% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>40% to 50% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>50% to 60% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>60% to 70% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>70% to 80% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>80% to 90% eff.</th><th class="_freezed_row "><span></span>Coverage (%)<br/>90% to 100% eff.</th><th class="_freezed_row  _table156_opt13 _tcol_hidden"><span></span>Coverage (%) new or unmeasured functions</th></tr><tr id="_tr_156_1" ><td id="_td_156_1_1"  data-_i="1" data-_j="1"  title="" tooltip_id="17" class=" _left _freezed_col  _centered tooltip-maqao" >run_0</td><td id="_td_156_1_2"  data-_i="1" data-_j="2"  class=" _centered" >8</td><td id="_td_156_1_3"  data-_i="1" data-_j="3"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_156_1_4"  data-_i="1" data-_j="4"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_156_1_5"  data-_i="1" data-_j="5"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_156_1_6"  data-_i="1" data-_j="6"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_156_1_7"  data-_i="1" data-_j="7"  class=" _centered"  style="background:#DBC285;" >0</td><td id="_td_156_1_8"  data-_i="1" data-_j="8"  class=" _centered"  style="background:#DBC285;" >0</td><td id="_td_156_1_9"  data-_i="1" data-_j="9"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_156_1_10"  data-_i="1" data-_j="10"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_156_1_11"  data-_i="1" data-_j="11"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_156_1_12"  data-_i="1" data-_j="12"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_156_1_13"  data-_i="1" data-_j="13"  class=" _centered _table156_opt13 _tcol_hidden"  style="background:#3E7D00;" >100</td></tr>
+</table></div><script>
+var list_opts_table156 = ['_table156_opt13',];addLoadEvent(function(){
+  var displayed_columns = [true, true, true, true, true, true, true, true, true, true, true, true, false];
+  // Update initial state using localStorage
+  for (var i = 0; i < displayed_columns.length; i++) {
+    var val = localStorage.getItem("__functions__table156_opt"+(i + 1));
+    if (val) {
+      displayed_columns[i] = (val === "true");
+    }
+    var obj = document.getElementById("_table156_opt"+(i + 1));
+    if (obj) {
+      if (displayed_columns[i] == true) {
+        obj.checked = true;
+      }
+      else {
+        obj.checked = false;
+      }
+    }
+  }
+  // Update table
+  var table = document.getElementById("_fixed_table_156");
+  for (let i in table.rows) {
+    let row = table.rows[i]
+    for (let j in row.cells) {
+      let col = row.cells[j]
+      if (col.classList) {
+        if (displayed_columns[j] == true) {
+          col.classList.remove("_tcol_hidden");
+        }
+        else {
+          col.classList.add("_tcol_hidden");
+        }
+      }
+    }
+  }
+  {
+    var value = localStorage.getItem("_table156_opt_all");
+    if (value) {
+      var obj = document.getElementById ("_table156_opt_all");
+      if (obj) {
+        obj.value = value;
+      }
+    }
+  }
+  _check_all_checkbox_ ("_table156_opt_all", "list_opts_table156");
+});
+</script>
+</div></div></div>
+</div>
+<div id="td_app_selected_8" class="td_app_selected">
+<div><h3 class="selected_panel_h3">Scalability - Coverage per Parallel Speedup at Function Level</h3>
+<div style="margin-top: 10px; margin-bottom: 10px; background-color: var(--chart_background); overflow-x:auto; overflow-y:hidden;"><div id="chart_cat_335" style="height:500px;margin-top:20px;" ></div></div>
+<script class="code" >
+</script><div class="_accordion_box collapsed" ><h3 id="_accordion_header_6" class="_header collapsed" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25B6;</span>Detailed Coverage per Parallel Speedup</h3><div id="_accordion_content_6" class="_content collapsed"><div class="_div_table" id="_fixed_157"><div class="_accordion_box" ><h3 id="_accordion_header_7" class="_header" onclick="_click_accordion_header(this)" ><span class="_accordion_box_button">&#x25BC;</span>Colums Filter<span class="tooltip-maqao-button help-maqao" title="" tooltip_id="18" ></span></h3><div id="_accordion_content_7" class="_content"><div style="max-height:165px;"><form>
+<span style="white-space:nowrap;"><input class="input_check_table_menu" type="checkbox" id="_table157_opt14" onclick="click_table_menu('_table157_opt14', '_table157_opt_all', 'list_opts_table157')" style="margin-left: 30px;vertical-align: middle;cursor:pointer;" >Coverage (%) new or unmeasured functions</span>
+<span style='white-space:nowrap;'><input class="input_check_table_menu" type="button" id="_table157_opt_all" onclick="set_all_table_menu(this, 'list_opts_table157')" style="margin-left: 30px;vertical-align: middle;cursor:pointer;" value="Select all"></span>
+</form></div>
+</div></div><table class="_fixed_table" id="_fixed_table_157"><tr><th class="_freezed_row  _left _freezed_col"><span></span>Run</th><th class="_freezed_row "><span></span>Number of observed threads</th><th class="_freezed_row "><span></span>Coverage (%)<br/>0% to 10%  speedup </th><th class="_freezed_row "><span></span>Coverage (%)<br/>10% to 20% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>20% to 30% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>30% to 40% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>40% to 50% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>50% to 60% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>60% to 70% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>70% to 80% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>80% to 90% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/>90% to 100% speedup</th><th class="_freezed_row "><span></span>Coverage (%)<br/> &gt; 100% speedup</th><th class="_freezed_row  _table157_opt14 _tcol_hidden"><span></span>Coverage (%) new or unmeasured functions</th></tr><tr id="_tr_157_1" ><td id="_td_157_1_1"  data-_i="1" data-_j="1"  title="" tooltip_id="19" class=" _left _freezed_col  _centered tooltip-maqao" >run_0</td><td id="_td_157_1_2"  data-_i="1" data-_j="2"  class=" _centered" >8</td><td id="_td_157_1_3"  data-_i="1" data-_j="3"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_157_1_4"  data-_i="1" data-_j="4"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_157_1_5"  data-_i="1" data-_j="5"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_157_1_6"  data-_i="1" data-_j="6"  class=" _centered"  style="background:#D29588;" >0</td><td id="_td_157_1_7"  data-_i="1" data-_j="7"  class=" _centered"  style="background:#DBC285;" >0</td><td id="_td_157_1_8"  data-_i="1" data-_j="8"  class=" _centered"  style="background:#DBC285;" >0</td><td id="_td_157_1_9"  data-_i="1" data-_j="9"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_157_1_10"  data-_i="1" data-_j="10"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_157_1_11"  data-_i="1" data-_j="11"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_157_1_12"  data-_i="1" data-_j="12"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_157_1_13"  data-_i="1" data-_j="13"  class=" _centered"  style="background:#A2C57F;" >0</td><td id="_td_157_1_14"  data-_i="1" data-_j="14"  class=" _centered _table157_opt14 _tcol_hidden" >100</td></tr>
+</table></div><script>
+var list_opts_table157 = ['_table157_opt14',];addLoadEvent(function(){
+  var displayed_columns = [true, true, true, true, true, true, true, true, true, true, true, true, true, false];
+  // Update initial state using localStorage
+  for (var i = 0; i < displayed_columns.length; i++) {
+    var val = localStorage.getItem("__functions__table157_opt"+(i + 1));
+    if (val) {
+      displayed_columns[i] = (val === "true");
+    }
+    var obj = document.getElementById("_table157_opt"+(i + 1));
+    if (obj) {
+      if (displayed_columns[i] == true) {
+        obj.checked = true;
+      }
+      else {
+        obj.checked = false;
+      }
+    }
+  }
+  // Update table
+  var table = document.getElementById("_fixed_table_157");
+  for (let i in table.rows) {
+    let row = table.rows[i]
+    for (let j in row.cells) {
+      let col = row.cells[j]
+      if (col.classList) {
+        if (displayed_columns[j] == true) {
+          col.classList.remove("_tcol_hidden");
+        }
+        else {
+          col.classList.add("_tcol_hidden");
+        }
+      }
+    }
+  }
+  {
+    var value = localStorage.getItem("_table157_opt_all");
+    if (value) {
+      var obj = document.getElementById ("_table157_opt_all");
+      if (obj) {
+        obj.value = value;
+      }
+    }
+  }
+  _check_all_checkbox_ ("_table157_opt_all", "list_opts_table157");
+});
+</script>
+</div></div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+addLoadEvent(function(){
+  var w = window,
+    d = document,
+    e = d.documentElement,
+    g = d.getElementsByTagName("body")[0],
+    x = w.innerWidth || e.clientWidth || g.clientWidth,
+    y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  var list = document.getElementsByClassName("main_section_div");
+  for (var i = 0; i < list.length; i++) {
+    if (y - 150 > 0) {
+      list[i].style.height = (y - 150)+"px";
+      list[i].style.maxHeight = (y - 150)+"px";
+    }
+  }
+});
+function load_charts () {
+  var obj = document.getElementById ("td_app_selected_1");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_328").innerHTML = "";
+  $(document).ready(function(){
+  var plot328_data = [[16.43,],[25.61,],[56.04,],[0.48,],[1.45,],];
+  var plot328_ticks = ['run_0',];
+  var plot328 = jQuery.jqplot ('chart_cat_328', plot328_data, {
+    seriesColors:['#839557','#4bb2c5','#EAA228','#d8b83f','#ff5800',],
+    stackSeries: true,
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot328_ticks,
+        label: 'Reports',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+        tickOptions:{formatString:'%.2f'},
+        max:100,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot328_ticks[pointIndex]+' - '+plot328_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'System', yaxis:'yaxis', },{label:'Binary', yaxis:'yaxis', },{label:'MPI', yaxis:'yaxis', },{label:'Memory', yaxis:'yaxis', },{label:'Others', yaxis:'yaxis', },],
+  });
+  var txts = ["20",];
+  var div_chart = document.getElementById ("chart_cat_328");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_2");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_329").innerHTML = "";
+  $(document).ready(function(){
+    var ordinals = ['1','2','3','4','5','6','7','8'];
+    var data = [{value: 0.04, offset: 0, i: 0, color: "#333399"},{value: 0.03, offset: 0, i: 1, color: "#333399"},{value: 0.04, offset: 0, i: 2, color: "#333399"},{value: 0.03, offset: 0, i: 3, color: "#333399"},{value: 0.04, offset: 0, i: 4, color: "#333399"},{value: 0, offset: 0, i: 5, color: "#333399"},{value: 0, offset: 0, i: 6, color: "#333399"},{value: 0.03, offset: 0, i: 7, color: "#333399"},{value: 0.02, offset: 0.04, i: 0, color: "#cc00cc"},{value: 0, offset: 0.03, i: 1, color: "#cc00cc"},{value: 0.01, offset: 0.04, i: 2, color: "#cc00cc"},{value: 0.01, offset: 0.03, i: 3, color: "#cc00cc"},{value: 0.02, offset: 0.04, i: 4, color: "#cc00cc"},{value: 0.06, offset: 0, i: 5, color: "#cc00cc"},{value: 0.02, offset: 0, i: 6, color: "#cc00cc"},{value: 0.01, offset: 0.03, i: 7, color: "#cc00cc"},{value: 0, offset: 0.06, i: 0, color: "#ffcc00"},{value: 0, offset: 0.03, i: 1, color: "#ffcc00"},{value: 0.01, offset: 0.05, i: 2, color: "#ffcc00"},{value: 0, offset: 0.04, i: 3, color: "#ffcc00"},{value: 0.01, offset: 0.06, i: 4, color: "#ffcc00"},{value: 0.01, offset: 0.06, i: 5, color: "#ffcc00"},{value: 0.05, offset: 0.02, i: 6, color: "#ffcc00"},{value: 0.01, offset: 0.04, i: 7, color: "#ffcc00"},{value: 0.02, offset: 0.06, i: 0, color: "#339966"},{value: 0.04, offset: 0.03, i: 1, color: "#339966"},{value: 0, offset: 0.06, i: 2, color: "#339966"},{value: 0, offset: 0.04, i: 3, color: "#339966"},{value: 0.01, offset: 0.07, i: 4, color: "#339966"},{value: 0, offset: 0.07, i: 5, color: "#339966"},{value: 0, offset: 0.07, i: 6, color: "#339966"},{value: 0.01, offset: 0.05, i: 7, color: "#339966"},{value: 0.01, offset: 0.08, i: 0, color: "#80ccff"},{value: 0.01, offset: 0.07, i: 1, color: "#80ccff"},{value: 0.01, offset: 0.06, i: 2, color: "#80ccff"},{value: 0.02, offset: 0.04, i: 3, color: "#80ccff"},{value: 0.01, offset: 0.08, i: 4, color: "#80ccff"},{value: 0, offset: 0.07, i: 5, color: "#80ccff"},{value: 0, offset: 0.07, i: 6, color: "#80ccff"},{value: 0.01, offset: 0.06, i: 7, color: "#80ccff"},{value: 0.01, offset: 0.09, i: 0, color: "#80ffcc"},{value: 0.01, offset: 0.08, i: 1, color: "#80ffcc"},{value: 0.01, offset: 0.07, i: 2, color: "#80ffcc"},{value: 0.01, offset: 0.06, i: 3, color: "#80ffcc"},{value: 0.01, offset: 0.09, i: 4, color: "#80ffcc"},{value: 0, offset: 0.07, i: 5, color: "#80ffcc"},{value: 0.01, offset: 0.07, i: 6, color: "#80ffcc"},{value: 0.01, offset: 0.07, i: 7, color: "#80ffcc"},{value: 0.01, offset: 0.1, i: 0, color: "#7979d2"},{value: 0, offset: 0.09, i: 1, color: "#7979d2"},{value: 0.01, offset: 0.08, i: 2, color: "#7979d2"},{value: 0.01, offset: 0.07, i: 3, color: "#7979d2"},{value: 0.02, offset: 0.1, i: 4, color: "#7979d2"},{value: 0, offset: 0.07, i: 5, color: "#7979d2"},{value: 0, offset: 0.08, i: 6, color: "#7979d2"},{value: 0.01, offset: 0.08, i: 7, color: "#7979d2"},{value: 0, offset: 0.11, i: 0, color: "#ff4dff"},{value: 0, offset: 0.09, i: 1, color: "#ff4dff"},{value: 0.01, offset: 0.09, i: 2, color: "#ff4dff"},{value: 0, offset: 0.08, i: 3, color: "#ff4dff"},{value: 0.01, offset: 0.12, i: 4, color: "#ff4dff"},{value: 0.01, offset: 0.07, i: 5, color: "#ff4dff"},{value: 0, offset: 0.08, i: 6, color: "#ff4dff"},{value: 0.01, offset: 0.09, i: 7, color: "#ff4dff"},{value: 0, offset: 0.11, i: 0, color: "#ffe066"},{value: 0, offset: 0.09, i: 1, color: "#ffe066"},{value: 0.01, offset: 0.1, i: 2, color: "#ffe066"},{value: 0.01, offset: 0.08, i: 3, color: "#ffe066"},{value: 0.01, offset: 0.13, i: 4, color: "#ffe066"},{value: 0, offset: 0.08, i: 5, color: "#ffe066"},{value: 0, offset: 0.08, i: 6, color: "#ffe066"},{value: 0.01, offset: 0.1, i: 7, color: "#ffe066"},{value: 0, offset: 0.11, i: 0, color: "#66cc99"},{value: 0, offset: 0.09, i: 1, color: "#66cc99"},{value: 0.01, offset: 0.11, i: 2, color: "#66cc99"},{value: 0, offset: 0.09, i: 3, color: "#66cc99"},{value: 0.01, offset: 0.14, i: 4, color: "#66cc99"},{value: 0, offset: 0.08, i: 5, color: "#66cc99"},{value: 0, offset: 0.08, i: 6, color: "#66cc99"},{value: 0.01, offset: 0.11, i: 7, color: "#66cc99"},{value: 0, offset: 0.11, i: 0, color: "#ccebff"},{value: 0.02, offset: 0.09, i: 1, color: "#ccebff"},{value: 0.03, offset: 0.12, i: 2, color: "#ccebff"},{value: 0, offset: 0.09, i: 3, color: "#ccebff"},{value: 0.05, offset: 0.15, i: 4, color: "#ccebff"},{value: 0, offset: 0.08, i: 5, color: "#ccebff"},{value: 0.03, offset: 0.08, i: 6, color: "#ccebff"},{value: 0.08, offset: 0.12, i: 7, color: "#ccebff"}];
+    var widthgl  = 900;
+    var widthin  = 900;
+    var heightgl = 480;
+    var heightin = 495;
+    let margin = {
+      top:    10,
+      right:  30,
+      bottom: 30,
+      left:   50
+    },
+    width = widthgl - margin.left - margin.right,
+    height = heightgl - margin.top - margin.bottom,
+    radius = (Math.min(width, height) / 2) - 10,
+    node;
+    const svg = d3.select('#chart_cat_329')
+        .append('svg')
+        .attr('width', widthin)
+        .attr('height', heightin)
+        .append('g')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .call(
+          d3.zoom()
+            .translateExtent([[0,0], [width, height] ])
+            .extent([[0, 0], [width, height] ])
+          .on('zoom', zoom)
+        ).on("dblclick.zoom", null);
+    let x = d3.scaleLinear().range([0, width])
+    let y = d3.scaleLinear().range([height, 0])
+    let color = d3.scaleOrdinal(d3.schemeCategory10)
+    let xScale = x.domain([-1, ordinals.length])
+    let yScale = y.domain([0, d3.max(data, function(d){return d.value + d.offset})])
+    let xBand = d3.scaleBand().domain(d3.range(-1, ordinals.length)).range([0, width])
+    svg.append('rect')
+      .attr('class', 'zoom-panel')
+      .attr('width', width)
+      .attr('height', height)
+      .style('fill', 'var(--background)')
+    let xAxis = svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', `translate(0, ${height})`)
+      .call(
+        d3.axisBottom(xScale).tickFormat((d, e) => {
+          return ordinals[d]
+        })
+      );
+    svg.append("text")
+      .attr("transform",
+            "translate(" + (width/2) + " ," + (height + margin.top + 30) + ")")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("MAQAO thread rank");
+    let yAxis = svg.append('g')
+      .attr('class', 'yAxis')
+      .call(d3.axisLeft(yScale));
+    yAxis.selectAll(".tick text").attr("fill","var(--font)");
+    yAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    yAxis.selectAll(".domain").attr("stroke","var(--font)");
+    xAxis.selectAll(".tick text").attr("fill","var(--font)");
+    xAxis.selectAll(".tick line").attr("stroke","var(--font)");
+    xAxis.selectAll(".domain").attr("stroke","var(--font)");
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .style("fill", "var(--font)")
+      .text("Time (s)");
+    let bars = svg.append('g')
+      .attr('clip-path','url(#my-clip-path)')
+      .attr('id', 'zoom_chart_329')
+      .selectAll('.bar')
+      .data(data)
+      .enter()
+      .append('rect')
+      .attr('class', 'bar')
+      .attr('id', function (d, i){ return 'zoom_chart_329_'+i;})
+      .attr('x', function(d, i){
+        return xScale(d.i) - xBand.bandwidth()*0.9/2
+      })
+      .attr('y', function(d, i){
+        return yScale(d.value + d.offset)
+      })
+      .attr('width', xBand.bandwidth()*0.9)
+      .attr('height', function(d){
+        return height - yScale(d.value)
+      })
+      .style("fill", function(d){
+        return d.color
+      })
+    let defs = svg.append('defs')
+      defs.append('clipPath')
+        .attr('id', 'my-clip-path')
+        .append('rect')
+        .attr('width', width)
+        .attr('height', height)
+      let hideTicksWithoutLabel = function() {
+        d3.selectAll('.xAxis .tick text').each(function(d){
+          if(this.innerHTML === '') {
+            this.parentNode.style.display = 'none';
+          }
+        })
+      }
+      function zoom() {
+        if (d3.event.transform.k < 1) {
+          d3.event.transform.k = 1;
+          return;
+        }
+      xAxis.call(
+        d3.axisBottom(d3.event.transform.rescaleX(xScale)).tickFormat((d, e, target) => {
+          if (Math.floor(d) === d3.format(".1f")(d)) return ordinals[Math.floor(d)]
+            return ordinals[d];
+        })
+      )
+      hideTicksWithoutLabel()
+        bars.attr("transform", "translate(" + d3.event.transform.x+",0)scale(" + d3.event.transform.k + ",1)")
+    }
+  });
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_3");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_330").innerHTML = "";
+  $(document).ready(function(){
+  var plot330_data = [[25.61,],[56.04,],[16.43,],[0.48,],[1.45,],];
+  var plot330_ticks = ['run_0',];
+  var plot330 = jQuery.jqplot ('chart_cat_330', plot330_data, {
+    seriesColors:['#4bb2c5','#EAA228','#839557','#d8b83f','#ff5800',],
+    stackSeries: true,
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot330_ticks,
+        label: 'Runs',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+        tickOptions:{formatString:'%.2f'},
+        max:100,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot330_ticks[pointIndex]+' - '+plot330_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'Binary', yaxis:'yaxis', },{label:'MPI', yaxis:'yaxis', },{label:'System', yaxis:'yaxis', },{label:'Memory', yaxis:'yaxis', },{label:'Others', yaxis:'yaxis', },],
+  });
+  var txts = ["21",];
+  var div_chart = document.getElementById ("chart_cat_330");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_4");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_331").innerHTML = "";
+  $(document).ready(function(){
+  var plot331_data = [[0.038415,],[0.08406,],[0.024645,],[0.00072,],[0.002175,],];
+  var plot331_ticks = ['run_0',];
+  var plot331 = jQuery.jqplot ('chart_cat_331', plot331_data, {
+    seriesColors:['#4bb2c5','#EAA228','#839557','#d8b83f','#ff5800',],
+    stackSeries: true,
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot331_ticks,
+        label: 'Runs',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Time (s) (lower is better)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot331_ticks[pointIndex]+' - '+plot331_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'Binary', yaxis:'yaxis', },{label:'MPI', yaxis:'yaxis', },{label:'System', yaxis:'yaxis', },{label:'Memory', yaxis:'yaxis', },{label:'Others', yaxis:'yaxis', },],
+  });
+  var txts = ["22",];
+  var div_chart = document.getElementById ("chart_cat_331");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_5");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_332").innerHTML = "";
+  $(document).ready(function(){
+  var plot332_data = [[1,],];
+  var plot332_ticks = ['run_0',];
+  var plot332 = jQuery.jqplot ('chart_cat_332', plot332_data, {
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot332_ticks,
+        label: 'Run',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Efficiency (higher is better)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot332_ticks[pointIndex]+' - '+plot332_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'Efficiency', yaxis:'yaxis', },],
+  });
+  var txts = ["23",];
+  var div_chart = document.getElementById ("chart_cat_332");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_6");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_333").innerHTML = "";
+  $(document).ready(function(){
+  var plot333_data = [[42.52,29.47,9.66,6.28,4.85,7.2,0,0,],[42.52,71.99,81.65,87.93,92.78,99.98,99.98,99.98,],];
+  var plot333_ticks = ['> 8%','4% to 8%','2% to 4%','1% to 2%','0.5% to 1%','0.25% to 0.5%','0.125% to 0.25%','< 0.125%',];
+  var plot333 = jQuery.jqplot ('chart_cat_333', plot333_data, {
+    seriesColors:['#333399','#7979d2',],
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+      },
+      pointLabels: {
+        show: true
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot333_ticks,
+        label: 'Coverage Ranges',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+        tickOptions:{formatString:'%.2f'},
+      },
+      y2axis: {
+        label: 'Cumulated Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot333_ticks[pointIndex]+' - '+plot333_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'run_0', yaxis:'yaxis', },{label:'cumul. cov. run_0', renderer: $.jqplot.LineRenderer, yaxis:'yaxis', },],
+  });
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_7");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_334").innerHTML = "";
+  $(document).ready(function(){
+  var plot334_data = [[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[100,],];
+  var plot334_ticks = ['run_0',];
+  var plot334 = jQuery.jqplot ('chart_cat_334', plot334_data, {
+    seriesColors:['#A52B12','#AE4029','#B75541','#C06A59','#BF9223','#C69E3B','#8FB966','#7CAD4C','#6AA232','#579619','#B3B3B3',],
+    stackSeries: true,
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+         barMargin: 20,
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot334_ticks,
+        label: 'Runs',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+        tickOptions:{formatString:'%.2f'},
+        max:100,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot334_ticks[pointIndex]+' - '+plot334_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'0% to 10% efficiency', yaxis:'yaxis', },{label:'10% to 20% efficiency', yaxis:'yaxis', },{label:'20% to 30% efficiency', yaxis:'yaxis', },{label:'30% to 40% efficiency', yaxis:'yaxis', },{label:'40% to 50% efficiency', yaxis:'yaxis', },{label:'50% to 60% efficiency', yaxis:'yaxis', },{label:'60% to 70% efficiency', yaxis:'yaxis', },{label:'70% to 80% efficiency', yaxis:'yaxis', },{label:'80% to 90% efficiency', yaxis:'yaxis', },{label:'90% to 100% efficiency', yaxis:'yaxis', },{label:'New or unmeasured functions', yaxis:'yaxis', },],
+  });
+  var txts = ["24",];
+  var div_chart = document.getElementById ("chart_cat_334");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+  var obj = document.getElementById ("td_app_selected_8");
+  obj.style.display = "block";
+  document.getElementById("chart_cat_335").innerHTML = "";
+  $(document).ready(function(){
+  var plot335_data = [[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[0,],[100,],];
+  var plot335_ticks = ['run_0',];
+  var plot335 = jQuery.jqplot ('chart_cat_335', plot335_data, {
+    seriesColors:['#A52B12','#AE4029','#B75541','#C06A59','#BF9223','#C69E3B','#8FB966','#7CAD4C','#6AA232','#579619','#458B00','#B3B3B3',],
+    stackSeries: true,
+    seriesDefaults: {
+      renderer: jQuery.jqplot.BarRenderer,
+      rendererOptions: {
+         barMargin: 20,
+      },
+      pointLabels: {
+        show: false
+      },
+    },
+    axes: {
+      xaxis: {
+        renderer: $.jqplot.CategoryAxisRenderer,
+        ticks: plot335_ticks,
+        label: 'Runs',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+      },
+      yaxis: {
+        label: 'Coverage (%)',
+        labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+        autoscale:true,
+        min:0,
+        tickOptions:{formatString:'%.2f'},
+        max:100,
+      },
+      y2axis: {
+        autoscale:true,
+        min:0,
+      }
+    },
+    highlighter: {
+      tooltipContentEditor: function (str, seriesIndex, pointIndex) {
+        return plot335_ticks[pointIndex]+' - '+plot335_data[seriesIndex][pointIndex];
+      },
+      show: true,
+      showTooltip: true,
+      sizeAdjust: 10,
+      formatString: '%s',
+      tooltipLocation: 'n',
+      useAxesFormatters: false,
+    },
+    legend: {
+       renderer: $.jqplot.EnhancedLegendRenderer,
+       show: true, 
+       location: 's', 
+       placement: 'outsideGrid',
+       rendererOptions: {
+          numberRows: '1',
+       },
+    },
+    series: [{label:'0% to 10% speedup', yaxis:'yaxis', },{label:'10% to 20% speedup', yaxis:'yaxis', },{label:'20% to 30% speedup', yaxis:'yaxis', },{label:'30% to 40% speedup', yaxis:'yaxis', },{label:'40% to 50% speedup', yaxis:'yaxis', },{label:'50% to 60% speedup', yaxis:'yaxis', },{label:'60% to 70% speedup', yaxis:'yaxis', },{label:'70% to 80% speedup', yaxis:'yaxis', },{label:'80% to 90% speedup', yaxis:'yaxis', },{label:'90% to 100% speedup', yaxis:'yaxis', },{label:'&gt; 100% speedup', yaxis:'yaxis', },{label:'New or unmeasured functions', yaxis:'yaxis', },],
+  });
+  var txts = ["25",];
+  var div_chart = document.getElementById ("chart_cat_335");
+  if (div_chart == null) {
+    return ;
+  }
+  var div_axis  = div_chart.getElementsByClassName ("jqplot-xaxis");
+  if (div_axis.length == 0
+  ||  div_axis[0].children.length == 0) {
+    return ;
+  }
+  for (var i = 1; i < div_axis[0].children.length; i++) {
+    var div_label = div_axis[0].children[i];
+    if (txts[i - 1] != "") {
+      div_label.setAttribute ("title", "");
+      div_label.setAttribute ("tooltip_id", txts[i - 1]);
+      div_label.classList.add ("tooltip-maqao");
+      div_label.style["z-index"] = 999;
+    }
+  }
+  txts = null;
+});
+  obj.style.display = "none";
+}
+function _onresize () {
+  var i = 1;
+  var c = 1;
+  var max_i = 8;
+  var obj;
+  while (i <= max_i) {
+    obj = document.getElementById ("td_app_selector_"+i);
+    if (obj != null && obj.classList.contains ("current")) {
+      c = i;
+      break;
+    }
+    i = i + 1;
+  }
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName("body")[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  document.getElementById ("td_app_selected_"+c).style.width = Math.floor(x*0.7)+"px";
+  if (y - 150 > 0) {
+    document.getElementById ("td_app_selected_"+c).style.height = (y - 150)+"px";
+  }
+  load_charts ();
+  click_app_selector (document.getElementById ("td_app_selector_"+c));
+  __maqao_legacy_onresize ();
+}
+var resizeId;
+window.addEventListener("resize", function() {
+  clearTimeout(resizeId);
+  resizeId = setTimeout(_onresize, 250);
+});
+function click_app_selector (obj) {
+  var x = document.getElementsByClassName("td_app_selector");
+  for (var i = 0; i < x.length; i++) {
+    x[i].classList.remove("current");
+  }
+  obj.classList.add ("current");
+  x = document.getElementsByClassName("td_app_selected");
+  for (var i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  document.getElementById ("td_app_selected_"+obj.id.substring(16)).style.display = "";
+}
+addLoadEvent(function(){
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.getElementsByTagName("body")[0],
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight|| e.clientHeight|| g.clientHeight;
+  var divs = document.getElementsByClassName("td_app_selected");
+  for (var i = 0; i < divs.length; i++) {
+    divs[i].style.width = Math.floor(x*0.7)+"px";
+    if (y - 150 > 0) {
+      divs[i].style.height = (y - 150)+"px";
+    }
+  }
+  load_charts ();
+  click_app_selector (document.getElementById ("td_app_selector_1"));
+});
+</script>
+<style>
+.td_app_selector {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.td_app_selector:hover {
+  border-left: 4px solid var(--fixed_box_borders);
+  padding-left: 4px;
+}
+.td_app_selector.current {
+  background: var(--table_row_even_background);
+}
+.td_app_selected {
+  overflow-y: auto;
+}
+.selected_panel_h3 {
+  text-align: left;
+  background-color: var(--fixed_box_header_background);
+  color: var(--fixed_box_header_font);
+  margin: 0px;
+  padding: 5px 0px 5px 10px;
+}
+</style>
+
+  <div id="MaqaoModal" class="maqao_modal">
+    <div class="maqao_modal-content">
+      <div class="maqao_modal-header">
+        <span class="maqao_close">&times;</span>
+      </div>
+      <div id="maqao_modal-body" class="maqao_modal-body">
+      </div>
+    </div>
+  </div>
+</div><script>
+var tooltips_texts = ['Details how the time is spent between several categories: <i>System</i> (system calls), <i>Binary</i> (user code), <i>MPI</i> (MPI runtime functions), <i>OMP</i> (OpenMP runtime functions),<i>Math</i>, (Math libraries), <i>Pthread</i>, (Pthread runtime), <i>I/O</i> (I/O functions), <i>String</i> (string manipulation functions), <i>Memory</i> (Memory management functions), user categories described in custom_categories table and finally <i>Others</i> (everything not included in previous categories)',
+'Details function execution times per thread',
+'Same analysis than <b>Application Categorization</b> for all runs described in the scalability analysis.<br>Run configurations are available as tooltip over chart X axis labels.',
+'Same analysis than <b>Application Categorization</b> for all runs described in the scalability analysis, but displayed in time (seconds) and not coverage (percentage).<br>Run configurations are available as tooltip over chart X axis labels.',
+'Efficiency for each run described in the scalability analysis.<br>Run configurations are available as tooltip over chart X axis labels. Higher is better',
+'Profiling of the application at the function level',
+'Strong Scalability: Efficiency = (time(Ref) / time (Run)) / Ideal_Speedup',
+'Speedup = time(Ref) / time (Run)',
+'mca_btl_vader_poll_handle_frag',
+'mca_pml_ob1_recv_req_start',
+'mca_pml_ob1_rdma_pipeline_btls',
+'mca_pml_ob1_recv_request_progress_match',
+'mca_pml_ob1_recv_frag_callback_match',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'A set of filters to display / hide some columns',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'A set of filters to display / hide some columns',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>',
+'<br><b>NB processes:</b> 8<br><b>NB nodes:</b> 1<br><b>Run Command:</b> &lt;executable&gt;<br><b>MPI Command:</b> mpirun -n &lt;number_processes&gt; --oversubscribe<br><b>Dataset:</b> <br><b>Run Directory:</b> .<br>'];
+var modal = document.getElementById('MaqaoModal');
+var span = document.getElementsByClassName("maqao_close")[0];
+span.onclick = function() {
+    modal.style.display = "none";
+}
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+    v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v2 - v1 : v1.toString().localeCompare(v2)
+    )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+addLoadEvent(function(){
+  document.querySelectorAll('._fixed_table th').forEach(th => th.addEventListener('click', (() => {
+    const table = th.closest('table');
+    // Remove all symbols in header
+    table.querySelectorAll('th').forEach(function (e) {
+      e.firstChild.textContent = "";
+    });
+    // Change the symbol on the clicked header
+    if (this.asc != true) {
+      th.firstChild.textContent = "\u25BC";
+    }
+    else {
+      th.firstChild.textContent = "\u25B2";
+    }
+    Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+        .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+        .forEach(tr => table.appendChild(tr) );
+  })));
+});
+function _check_all_checkbox_ (obj_id, opts_ids) {
+  var obj   = document.getElementById (obj_id);
+  var opts  = window[opts_ids];
+  var count = 0
+  for (i = 0; i < opts.length; i++) {
+    var obj_s = document.getElementById(opts[i]);
+    if (obj_s.checked) {
+      count ++;
+    }
+  }
+  if (count == 0) {
+    obj.value = "Select all";
+  }
+  else if (count == opts.length) {
+    obj.value = "Select none";
+  }
+}
+// Fonction for table selector
+function click_table_menu (c, obj_id, opt_ids) {
+  var is_checked = document.getElementById (c).checked;
+  localStorage.setItem("__functions_"+c, is_checked);
+  $("."+c).each(function(index, element) {
+    if (is_checked) {
+      element.classList.remove("_tcol_hidden");
+    }
+    else {
+      element.classList.add("_tcol_hidden");
+    }
+  });
+  if (obj_id != undefined) {
+    _check_all_checkbox_ (obj_id, opt_ids)
+  }
+}
+function set_all_table_menu (obj, var_opt_ids) {
+  var opt_ids = window[var_opt_ids];
+  var is_selected = true
+  if (obj.value == "Select all") {
+    is_selected = false;
+  }
+  for (i = 0; i < opt_ids.length; i++) {
+    var obj_s = document.getElementById(opt_ids[i]);
+    if (is_selected == obj_s.checked) {
+      obj_s.checked = !obj_s.checked;
+      click_table_menu (opt_ids[i]);
+    }
+  }
+  if (is_selected == false) {
+    obj.value = "Select none";
+  } else {
+    obj.value = "Select all";
+  }
+  localStorage.setItem(obj.id, obj.value);
+}
+// Script for accordion box
+function _click_accordion_header(obj) {
+  var content = obj.nextSibling;
+  content.classList.toggle('collapsed');
+  obj.classList.toggle('collapsed');
+  obj.parentNode.classList.toggle('collapsed');
+  // Check if the box must be openned ...
+  if (obj.classList.contains ('collapsed'))
+  {
+    obj.firstChild.textContent = "\u25B6";
+  }
+  // or closed.
+  else 
+  {
+    obj.firstChild.textContent = "\u25BC";
+  }
+  if (typeof _onresize === "function") {
+    _onresize ();
+  }
+}
+  // Script for paged table
+function _click_paged_prev(obj) {
+  var pages_content_id = '_paged_tables_page_' + obj.parentNode.parentNode.id.substr (obj.parentNode.parentNode.id.lastIndexOf('_') + 1);
+  var pages_content = document.getElementById(pages_content_id).innerHTML;
+  var max_pages = pages_content.substr (pages_content.lastIndexOf('/') + 1);
+  var cur_page  = pages_content.substring (pages_content.lastIndexOf(' ') + 1, pages_content.lastIndexOf('/'));
+  max_pages = Number (max_pages);
+  cur_page  = Number (cur_page);
+  if (cur_page > 1) {
+    var div_paged = obj.parentNode.parentNode.id;
+    var i;
+    var x = document.getElementsByClassName(div_paged + '_' + (cur_page - 1));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    x = document.getElementsByClassName(div_paged + '_' + (cur_page - 2));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+  document.getElementById(pages_content_id).textContent = "Page " + (cur_page - 1) + "/" + max_pages;
+  }
+}
+function _click_paged_next(obj) {
+  var pages_content_id = '_paged_tables_page_' + obj.parentNode.parentNode.id.substr (obj.parentNode.parentNode.id.lastIndexOf('_') + 1);
+  var pages_content = document.getElementById(pages_content_id).innerHTML;
+  var max_pages = pages_content.substr (pages_content.lastIndexOf('/') + 1);
+  var cur_page  = pages_content.substring (pages_content.lastIndexOf(' ') + 1, pages_content.lastIndexOf('/'));
+  max_pages = Number (max_pages);
+  cur_page  = Number (cur_page);
+  if (cur_page < max_pages) {
+    var div_paged = obj.parentNode.parentNode.id;
+    var i;
+    var x = document.getElementsByClassName(div_paged + '_' + (cur_page - 1));
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    x = document.getElementsByClassName(div_paged + '_' + cur_page);
+    for (i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_paged_hidden');
+    }
+    document.getElementById(pages_content_id).textContent = "Page " + (cur_page + 1) + "/" + max_pages;
+  }
+}
+// Function for tree table
+function _click_treed(obj) {
+  if (obj.innerHTML == "\u25BA") {
+    obj.textContent = "\u25BC";
+    // Open childs
+    var x = document.getElementsByClassName(obj.parentNode.parentNode.id);
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.toggle('_treed_hidden');
+    }
+  }
+  else if (obj.innerHTML == "\u25BC") {
+    obj.textContent = "\u25BA";
+    // Close all childs
+    var trs = document.getElementsByTagName('tr');
+    var r   = obj.parentNode.parentNode.id+'_';
+    var re  = new RegExp (r, "g");
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+""
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (! o.classList.contains('_treed_hidden')) {
+          o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BC") {
+          o.firstChild.firstChild.textContent = "\u25BA";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '+';
+        }
+      }
+    }
+    if (obj.parentNode.childNodes.length == 3) {
+      obj.parentNode.childNodes[2].textContent = '+';
+    }
+  }
+}
+function _click_expand (obj) {
+  var trs = document.getElementsByTagName('tr');
+  var r   = obj.parentNode.parentNode.id+'_';
+  var re  = new RegExp (r, "g");
+  // Symbole + => expand all
+  if (obj.textContent == "+") {
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+"";
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (o.classList.contains('_treed_hidden')) {
+           o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BA") {
+          o.firstChild.firstChild.textContent = "\u25BC";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '\u2010';
+        }
+      }
+    }
+    var o = obj.parentNode.parentNode;
+    if (o.firstChild.firstChild.textContent == "\u25BA") {
+      o.firstChild.firstChild.textContent = "\u25BC";
+    }
+    obj.textContent = "\u2010";
+  }
+  // Symbole - => collapse all
+  else {
+    for (var i = 0; i < trs.length; i++) {
+      var s = trs[i].id+"";
+      if (s.match(re)) {
+        var o = document.getElementById(s);
+        if (! o.classList.contains('_treed_hidden')) {
+           o.classList.toggle('_treed_hidden');
+        }
+        if (o.firstChild.firstChild.textContent == "\u25BC") {
+          o.firstChild.firstChild.textContent = "\u25BA";
+        }
+        if (o.firstChild.childNodes.length == 3) {
+          o.firstChild.childNodes[2].textContent = '+';
+        }
+      }
+    }
+    var o = obj.parentNode.parentNode;
+    if (o.firstChild.firstChild.textContent == "\u25BC") {
+      o.firstChild.firstChild.textContent = "\u25BA";
+    }
+    obj.textContent = "+";
+  }
+}
+// Hide unselected tabs
+addLoadEvent(function(){
+  var x = document.getElementsByClassName("_tab_header_li");
+  for (var i = 0; i < x.length; i++) {
+    if (x[i].classList.contains("selected_tab") == false) {
+      var e = document.getElementById (x[i].dataset.tab);
+      e.style.display = "none";
+    }
+  }
+});
+// Change tab
+function change_tab (e, baseId) {
+  // Handle tabs
+  var i = 1;
+  while (true) {
+    var id = baseId + i;
+    var t = document.getElementById (id);
+    if (t == null) {
+      break;
+    }
+    if (id == e.dataset.tab) {
+      t.style.removeProperty("display");
+    }
+    else {
+      t.style.display = "none";
+    }
+    i = i + 1;
+  }
+  // Handle headers
+  $(e).siblings().each( function () {
+    this.classList.remove("selected_tab");
+  });
+  e.classList.add("selected_tab");
+}
+function __maqao_legacy_onresize () {
+  var obj = document.getElementById("spacer_page_title");
+  if (obj) {
+    obj.style.height = (document.getElementById("page_title").clientHeight + 20)+"px";
+  }
+  var obj = document.getElementById("page_title");
+  if (obj) {
+    var elems = document.getElementsByClassName ("_first_menu_level")
+    if (obj.clientHeight < 90) {
+      for (var i = 0; i < elems.length; i++) {
+        elems.item(i).style.borderBottomLeftRadius = "";
+        elems.item(i).style.borderBottomRightRadius = "";
+      }
+    }
+    else {
+      for (var i = 0; i < elems.length; i++) {
+        elems.item(i).style.borderBottomLeftRadius = "10px";
+        elems.item(i).style.borderBottomRightRadius = "10px";
+      }
+    }
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+********************************************************************************
+
+MAQAO 2.15.5 - 0b66882c33fcd95ef103e22d5fec6c0d2ff1b5e2::20220328-144625 || 2022/03/28
+
+maqao oneview -R1 --create-report=one -WS -c=file.lua --replace 
+
+--with-scalability (-WS) option is used but no additional runs have been setup in multiruns_params
+
+CMD:   /usr/local/bin/maqao lprof  --xp="/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0" --mpi-command="mpirun -n 8 --oversubscribe"   -- /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/binaries/lbm

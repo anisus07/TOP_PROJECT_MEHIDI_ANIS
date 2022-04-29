@@ -1,0 +1,11 @@
+name;time_p;time_s;cpi_ratio;
+/usr/lib/x86_64-linux-gnu/openmpi/lib/openmpi3/mca_pml_ob1.so;32.37;0.05;;
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/binaries/lbm;25.61;0.04;;
+/usr/lib/x86_64-linux-gnu/openmpi/lib/openmpi3/mca_btl_vader.so;19.81;0.03;;
+/usr/lib/x86_64-linux-gnu/libc-2.31.so;10.63;0.02;;
+/usr/lib/x86_64-linux-gnu/ld-2.31.so;5.31;0.01;;
+/usr/lib/x86_64-linux-gnu/openmpi/lib/libopen-pal.so.40.20.3;2.41;0;;
+kernel;1.45;0;;
+/usr/lib/x86_64-linux-gnu/openmpi/lib/libmpi.so.40.20.3;1.45;0;;
+/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.10;0.48;0;;
+/usr/lib/x86_64-linux-gnu/pmix/lib/libpmix.so.2.2.25;0.48;0;;

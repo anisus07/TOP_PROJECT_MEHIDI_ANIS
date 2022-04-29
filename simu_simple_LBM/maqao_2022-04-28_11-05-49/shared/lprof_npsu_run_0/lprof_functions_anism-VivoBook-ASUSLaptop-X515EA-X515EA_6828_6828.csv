@@ -1,0 +1,13 @@
+function_id;module;function_name;source_info;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;cats;
+54;mca_btl_vader.so;mca_btl_vader_poll_handle_frag;;29.63;0.04;;;;;;"0,100,0,0,0,0,0,0,0,0";
+1365;libc-2.31.so;_mcleanup;;11.11;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";
+86;mca_pml_ob1.so;mca_pml_ob1_rdma_pipeline_btls;;11.11;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+26;lbm;propagation;lbm_struct.h:116-116,lbm_phys.c:332-354;11.11;0.01;;;;;;"100,0,0,0,0,0,0,0,0,0";
+99;mca_pml_ob1.so;mca_pml_ob1_recv_request_progress_match;;7.41;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+25;lbm;collision;lbm_struct.h:116-116,lbm_phys.c:51-323;7.41;0.01;;;;;;"100,0,0,0,0,0,0,0,0,0";
+121;libxml2.so.2.9.10;xmlParseEntityRef;;3.7;0.01;;;;;;"0,0,0,0,0,0,0,0,0,100";
+89;mca_pml_ob1.so;mca_pml_ob1_recv_frag_callback_match;;3.7;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+81;mca_pml_ob1.so;mca_pml_ob1_send;;3.7;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+78;mca_pml_ob1.so;mca_pml_ob1_mrecv;;3.7;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+49;mca_btl_vader.so;.plt.sec@start;;3.7;0.01;;;;;;"0,100,0,0,0,0,0,0,0,0";
+11;ld-2.31.so;_dl_rtld_di_serinfo;;3.7;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";

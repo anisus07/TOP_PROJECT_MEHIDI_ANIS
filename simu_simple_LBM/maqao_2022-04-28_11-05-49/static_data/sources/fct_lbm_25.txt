@@ -1,0 +1,43 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 116
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_phys.c: 51 - 323
+--------------------------------------------------------------------------------
+
+51: 		res += vect1[k] * vect2[k];
+[...]
+68: 	assert( cell != NULL );
+69: 
+70: 	//loop on directions
+71: 	for( k = 0 ; k < DIRECTIONS ; k++)
+72: 		res += cell[k];
+[...]
+101: 			v[d] += cell[k] * direction_matrix[k][d];
+102: 
+103: 		//normalize
+104: 		v[d] = v[d] / cell_density;
+[...]
+132: 	feq = 1.0
+133: 		+ (3.0 * p)
+134: 		+ ((9.0 / 2.0) * p2)
+135: 		- ((3.0 / 2.0) * v2);
+136: 
+137: 	//mult all by density and direction weight
+138: 	feq *= equil_weight[direction] * density;
+[...]
+165: 		cell_out[k] = cell_in[k] - RELAX_PARAMETER * (cell_in[k] - feq);
+[...]
+311: {
+312: 	//vars
+313: 	int i,j;
+314: 
+315: 	//errors
+316: 	assert(mesh_in->width == mesh_out->width);
+317: 	assert(mesh_in->height == mesh_out->height);
+318: 
+319: 	//loop on all inner cells
+320: 	for( j = 1 ; j < mesh_in->height - 1 ; j++)
+321: 		for( i = 1 ; i < mesh_in->width - 1 ; i++ )
+322: 			compute_cell_collision(Mesh_get_cell(mesh_out, i, j),Mesh_get_cell(mesh_in, i, j));
+323: }

@@ -1,0 +1,9 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 116
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_comm.c: 229 - 230
+--------------------------------------------------------------------------------
+
+229: 				for ( k = 0 ; k < DIRECTIONS ; k++)
+230: 					MPI_Send( &Mesh_get_cell(mesh_to_process, x, y)[k], 1, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);

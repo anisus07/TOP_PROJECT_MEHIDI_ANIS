@@ -1,0 +1,7 @@
+function_id;module;function_name;source_info;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;cats;
+25;lbm;collision;lbm_struct.h:116-116,lbm_phys.c:51-323;50;0.05;;;;;;"100,0,0,0,0,0,0,0,0,0";
+26;lbm;propagation;lbm_struct.h:116-116,lbm_phys.c:332-354;20;0.02;;;;;;"100,0,0,0,0,0,0,0,0,0";
+1365;libc-2.31.so;_mcleanup;;15;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";
+1870;libc-2.31.so;_dl_catch_exception;;5;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";
+19;ld-2.31.so;_dl_find_dso_for_object;;5;0.01;;;;;;"0,0,0,0,100,0,0,0,0,0";
+17;lbm;get_cell_velocity;lbm_phys.c:85-106;5;0.01;;;;;;"100,0,0,0,0,0,0,0,0,0";

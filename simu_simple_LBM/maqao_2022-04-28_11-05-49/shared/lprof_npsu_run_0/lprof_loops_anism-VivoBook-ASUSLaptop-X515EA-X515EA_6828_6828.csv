@@ -1,0 +1,3 @@
+loop_id;module;function_name;function_id;source_info;level;time_p;time_s;time_s_min;time_s_avg;time_s_max;cov_deviation;nb_threads;
+9;lbm;propagation;26;lbm_struct.h:116-116,lbm_phys.c:340-350;Innermost;11.11;0.01;;;;;;
+7;lbm;collision;25;lbm_struct.h:116-116,lbm_phys.c:51-321;Innermost;7.41;0.01;;;;;;

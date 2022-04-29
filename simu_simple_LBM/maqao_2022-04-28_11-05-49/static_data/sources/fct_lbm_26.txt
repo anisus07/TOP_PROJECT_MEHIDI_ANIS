@@ -1,0 +1,22 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 116
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_phys.c: 332 - 354
+--------------------------------------------------------------------------------
+
+332: {
+[...]
+338: 	for ( j = 0 ; j < mesh_out->height ; j++)
+339: 	{
+340: 		for ( i = 0 ; i < mesh_out->width; i++)
+[...]
+346: 				ii = (i + direction_matrix[k][0]);
+347: 				jj = (j + direction_matrix[k][1]);
+348: 				//propagate to neighboor nodes
+349: 				if ((ii >= 0 && ii < mesh_out->width) && (jj >= 0 && jj < mesh_out->height))
+350: 					Mesh_get_cell(mesh_out, ii, jj)[k] = Mesh_get_cell(mesh_in, i, j)[k];
+351: 			}
+352: 		}
+353: 	}
+354: }

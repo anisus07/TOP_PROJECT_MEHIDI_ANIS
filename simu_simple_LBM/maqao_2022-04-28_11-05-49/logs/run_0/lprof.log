@@ -1,0 +1,86 @@
+
+* Info: Detected 8 Lprof instances in anism-VivoBook-ASUSLaptop-X515EA-X515EA: processes-per-node/ppn set accordingly.
+If this is incorrect, rerun with an explicit value for this setting
+[0m
+* Info: Selecting the 'perf-high-ppn' engine for node anism-VivoBook-ASUSLaptop-X515EA-X515EA
+[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6792)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6794)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6804)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6805)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6817)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6816)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6829)[0m
+* Info: Process launched (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6828)[0m RANK 6 ( LEFT -1 RIGHT -1 TOP 5 BOTTOM 7 CORNER -1, -1, -1, -1 ) ( POSITION 0 120 ) (WH 802 22 ) 
+ RANK 1 ( LEFT -1 RIGHT -1 TOP 0 BOTTOM 2 CORNER -1, -1, -1, -1 ) ( POSITION 0 20 ) (WH 802 22 ) 
+=================== CONFIG ===================
+iterations           = 16
+ RANK 5 ( LEFT -1 RIGHT -1 TOP 4 BOTTOM 6 CORNER -1, -1, -1, -1 ) ( POSITION 0 100 ) (WH 802 22 ) 
+width                = 800
+height               = 160
+ RANK 3 ( LEFT -1 RIGHT -1 TOP 2 BOTTOM 4 CORNER -1, -1, -1, -1 ) ( POSITION 0 60 ) (WH 802 22 ) 
+obstacle_r           = 17.000000
+obstacle_x           = 161.000000
+obstacle_y           = 83.000000
+reynolds             = 100.000000
+ RANK 7 ( LEFT -1 RIGHT -1 TOP 6 BOTTOM -1 CORNER -1, -1, -1, -1 ) ( POSITION 0 140 ) (WH 802 22 ) 
+reynolds             = 100.000000
+inflow_max_velocity  = 0.100000
+output_filename      = resultat.raw
+write_interval       = 100
+------------ Derived parameters --------------
+kinetic_viscosity    = 0.034000
+relax_parameter      = 1.661130
+==============================================
+ RANK 0 ( LEFT -1 RIGHT -1 TOP -1 BOTTOM 1 CORNER -1, -1, -1, -1 ) ( POSITION 0 0 ) (WH 802 22 ) 
+ RANK 2 ( LEFT -1 RIGHT -1 TOP 1 BOTTOM 3 CORNER -1, -1, -1, -1 ) ( POSITION 0 40 ) (WH 802 22 ) 
+ RANK 4 ( LEFT -1 RIGHT -1 TOP 3 BOTTOM 5 CORNER -1, -1, -1, -1 ) ( POSITION 0 80 ) (WH 802 22 ) 
+Progress [    1 /    16]
+Progress [    2 /    16]
+Progress [    3 /    16]
+Progress [    4 /    16]
+Progress [    5 /    16]
+Progress [    6 /    16]
+Progress [    7 /    16]
+Progress [    8 /    16]
+Progress [    9 /    16]
+Progress [   10 /    16]
+Progress [   11 /    16]
+Progress [   12 /    16]
+Progress [   13 /    16]
+Progress [   14 /    16]
+Progress [   15 /    16]
+
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6794)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6829)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6805)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6817)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6828)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6816)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6804)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+* Info: Process finished (host anism-VivoBook-ASUSLaptop-X515EA-X515EA, process 6792)[0m
+* Info: Detected stop signals that could make lprof alter execution. In case of issues, rerun with -verbose for more information.[0m
+
+Your experiment path is /home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0
+
+To display your profiling results:
+##############################################################################################################################################################################
+#    LEVEL    |     REPORT     |                                                                   COMMAND                                                                   #
+##############################################################################################################################################################################
+#  Functions  |  Cluster-wide  |  maqao lprof -df xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0      #
+#  Functions  |  Per-node      |  maqao lprof -df -dn xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+#  Functions  |  Per-process   |  maqao lprof -df -dp xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+#  Functions  |  Per-thread    |  maqao lprof -df -dt xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+#  Loops      |  Cluster-wide  |  maqao lprof -dl xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0      #
+#  Loops      |  Per-node      |  maqao lprof -dl -dn xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+#  Loops      |  Per-process   |  maqao lprof -dl -dp xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+#  Loops      |  Per-thread    |  maqao lprof -dl -dt xp=/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/maqao_2022-04-28_11-05-49/tools/lprof_npsu_run_0  #
+##############################################################################################################################################################################
+

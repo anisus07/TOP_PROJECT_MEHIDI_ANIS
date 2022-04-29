@@ -1,0 +1,21 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_phys.c: 85 - 106
+--------------------------------------------------------------------------------
+
+85: {
+86: 	//vars
+87: 	int k,d;
+88: 
+89: 	//errors
+90: 	assert(v != NULL);
+91: 	assert(cell != NULL);
+[...]
+97: 		v[d] = 0.0;
+98: 
+99: 		//sum all directions
+100: 		for ( k = 0 ; k < DIRECTIONS ; k++)
+101: 			v[d] += cell[k] * direction_matrix[k][d];
+102: 
+103: 		//normalize
+104: 		v[d] = v[d] / cell_density;
+105: 	}
+106: }

@@ -1,0 +1,2 @@
+run_index;run_name;nb_processes;nb_threads;time;ideal_speedup;speedup;efficiency;
+0;run_0;8;8;0.50954800844193;1;1;1;

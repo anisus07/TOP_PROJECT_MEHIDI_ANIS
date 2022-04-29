@@ -1,0 +1,32 @@
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_init.c: 67 - 94
+--------------------------------------------------------------------------------
+
+67: {
+68: 	//vars
+69: 	int i,j,k;
+70: 	Vector v = {0.0,0.0};
+71: 	const double density = 1.0;
+72: 
+73: 	int rank;
+74: 	MPI_Comm_rank(MPI_COMM_WORLD,&rank);
+75: 
+76: 	//apply poiseuil for all nodes except on top/bottom border
+77: 	for ( i = 0 ; i < mesh->width ; i++)
+78: 	{
+79: 		for ( j = 0 ; j < mesh->height ; j++)
+80: 		{
+81: 			for ( k = 0 ; k < DIRECTIONS ; k++)
+82: 			{
+83: 				//compute equilibr.
+84: 				v[0] = helper_compute_poiseuille(j + mesh_comm->y,MESH_HEIGHT);
+85: 				Mesh_get_cell(mesh, i, j)[k] = compute_equilibrium_profile(v,density,k);
+86: 				//mark as standard fluid
+87: 				*( lbm_cell_type_t_get_cell( mesh_type , i, j) ) = CELL_FUILD;
+[...]
+94: }
+/home/anism/Téléchargements/TOP_PROJET_ETUDIANT/simu_simple_LBM/lbm_struct.h: 116 - 135
+--------------------------------------------------------------------------------
+
+116: 	return &mesh->cells[ (x * mesh->height + y) * DIRECTIONS ];
+[...]
+135: 	return &meshtype->types[ x * meshtype->height + y];
